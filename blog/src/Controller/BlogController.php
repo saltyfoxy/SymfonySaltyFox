@@ -18,4 +18,24 @@ class BlogController extends AbstractController
             'owner' => 'Pandora',
         ]);
     }
+
+    /**
+     * @Route("/blog/list", name="blog_list")
+     */
+    public function list()
+    {
+        //
+    }
+
+    /**
+     * @Route("/blog/show/{slug<[a-z0-9-]+>}", name="blog_show")
+     */
+    public function show($slug = 'article sans titre')
+    {
+
+        return $this->render('blog/show.html.twig', [
+            'slug' => ucwords(str_replace('-', ' ', $slug))
+        ]);
+
+    }
 }
