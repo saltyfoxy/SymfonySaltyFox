@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Entity\Category;
+use App\Repository\CategoryRepository;
 use Doctrine\ORM\Mapping\OrderBy;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,13 +48,16 @@ class BlogController extends AbstractController
      */
     public function showByCategory(string $categoryName)
     {
-        $category = $this->getDoctrine()
+
+          $category = $this->getDoctrine()
             ->getRepository(Category::class)
             ->findOneBy(['name' => $categoryName]);
 
-        $articles = $this->getDoctrine()
-            ->getRepository(Article::class)
-            ->findBy(['category' => $category], ['id' => 'DESC'],3);
+//          $articles = $this->getDoctrine()
+//          ->getRepository(Article::class)
+//          ->findBy(['category' => $category], ['id' => 'DESC'],3);
+
+          $articles = $category->getArticles();
 
         return $this->render(
             'blog/category.html.twig',
