@@ -18,12 +18,14 @@ class CategoryController extends AbstractController
         $form = $this->createForm(CategoryType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+
             $category = $form->getData();
             $manager = $this->getDoctrine()->getManager();
             $manager->persist($category);
             $manager->flush();
             $this->addFlash('success', 'Category added !');
         }
+
         return $this->render('Category/addCategory.html.twig', [
             'form' => $form->createView(),
         ]);
