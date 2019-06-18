@@ -38,7 +38,7 @@ class BlogController extends AbstractController
     }
 
     /**
-     * Getting articles from a selected Category
+     * Getting articles from a selected CategoryFixtures
      *
      * @Route("/blog/category/{name}", name="show_category")
      * @param Category $category
@@ -49,7 +49,7 @@ class BlogController extends AbstractController
     {
 
 //          $category = $this->getDoctrine()
-//              ->getRepository(Category::class)
+//              ->getRepository(CategoryFixtures::class)
 //              ->findOneBy(['name' => $categoryName]);
 
 //          $articles = $this->getDoctrine()

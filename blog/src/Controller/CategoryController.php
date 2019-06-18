@@ -23,10 +23,10 @@ class CategoryController extends AbstractController
             $manager = $this->getDoctrine()->getManager();
             $manager->persist($category);
             $manager->flush();
-            $this->addFlash('success', 'Category added !');
+            $this->addFlash('success', 'CategoryFixtures added !');
         }
 
-        return $this->render('Category/addCategory.html.twig', [
+        return $this->render('CategoryFixtures/addCategory.html.twig', [
             'form' => $form->createView(),
         ]);
     }
