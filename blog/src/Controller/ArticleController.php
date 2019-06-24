@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/article")
  */
-class ArticleController extends AbstractController
+class  ArticleController extends AbstractController
 {
     /**
      * @Route("/", name="article_index", methods={"GET"})
