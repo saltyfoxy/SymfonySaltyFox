@@ -43,6 +43,8 @@ class  ArticleController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $slug = $slugify->generate($article->getTitle());
             $article->setSlug($slug);
+            $author = $this->getUser();
+            $article->setAuthor($author);
             $entityManager->persist($article);
             $entityManager->flush();
             $mailContent = $this->renderView(
@@ -52,8 +54,7 @@ class  ArticleController extends AbstractController
             $message = (new \Swift_Message('Un nouvel article vient d\'être publié !'))
                 ->setFrom($this->getParameter('mailer_from'))
                 ->setTo('spacedz8@gmail.com')
-                ->setBody($mailContent,"text/html" )
-            ;
+                ->setBody($mailContent, "text/html");
             $mailer->send($message);
             return $this->redirectToRoute('article_index');
         }
