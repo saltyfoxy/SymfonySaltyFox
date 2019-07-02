@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Controller;
+
 use App\Entity\Article;
 use App\Form\ArticleType;
 use App\Repository\ArticleRepository;
@@ -8,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+
 /**
  * @Route("/article")
  */
@@ -24,21 +27,34 @@ class  ArticleController extends AbstractController
             'articles' => $articleRepository->findAll(),
         ]);
     }
+
     /**
      * @Route("/new", name="article_new", methods={"GET","POST"})
      * @param Request $request
      * @return Response
      */
-    public function new(Request $request, Slugify $slugify): Response
+
+    public function new(Request $request, Slugify $slugify, \Swift_Mailer $mailer): Response
     {
         $article = new Article();
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
-            $article->setSlug($slugify->generate($article->getTitle()));
+            $slug = $slugify->generate($article->getTitle());
+            $article->setSlug($slug);
             $entityManager->persist($article);
             $entityManager->flush();
+            $mailContent = $this->renderView(
+                'article/notification.html.twig',
+                array('article' => $article)
+            );
+            $message = (new \Swift_Message('Un nouvel article vient d\'être publié !'))
+                ->setFrom($this->getParameter('mailer_from'))
+                ->setTo('spacedz8@gmail.com')
+                ->setBody($mailContent,"text/html" )
+            ;
+            $mailer->send($message);
             return $this->redirectToRoute('article_index');
         }
         return $this->render('article/new.html.twig', [
@@ -46,6 +62,7 @@ class  ArticleController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
     /**
      * @Route("/{id}", name="article_show", methods={"GET"})
      * @param Article $article
@@ -57,6 +74,7 @@ class  ArticleController extends AbstractController
             'article' => $article,
         ]);
     }
+
     /**
      * @Route("/{id}/edit", name="article_edit", methods={"GET","POST"})
      * @param Request $request
@@ -78,6 +96,7 @@ class  ArticleController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
     /**
      * @Route("/{id}", name="article_delete", methods={"DELETE"})
      * @param Request $request
@@ -86,7 +105,7 @@ class  ArticleController extends AbstractController
      */
     public function delete(Request $request, Article $article): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$article->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $article->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($article);
             $entityManager->flush();
